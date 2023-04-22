@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springP
+
+    <!--    Log shown in console with new pattern -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--    To send log to Logstash -->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <!--        Logstash runs on port 5000 in TCP -->
+        <destination>localhost:5000</destination>
+
+        <includeCallerData>true</includeCallerData>
+
+        <!--    See for more detail: https://github.com/logfellow/logstash-logback-encoder -->
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <jsonGeneratorDecorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator"/>
+            <providers>
+                <timestamp/>
+                <version/>
+                <loggerName/>
+                <logLevel/>
+                <threadName/>
+                <message/>
+                <stackTrace />
+                <mdc>
+                    <excludeMdcKeyName>Authorization</excludeMdcKeyName>
+                </mdc>
+                <pattern>
+                    <pattern>
+                        {
+                        "json_message": "#asJson{%message}"
+                        }
+                    </pattern>
+                    <omitEmptyFields>true</omitEmptyFields>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="LOGSTASH" />
+    </root>
+
+    <!--    See: https://www.baeldung.com/logback#5-modifying-loggers -->
+    <!--    How to modify logger if we have multiple logger -->
+    <logger name="com.alisa.logELK" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="LOGSTASH" />
+    </logger>
+
+</configuration>

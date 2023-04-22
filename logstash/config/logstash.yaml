@@ -1,0 +1,10 @@
+# See all Settings
+# https://www.elastic.co/guide/en/logstash/current/logstash-settings-file.html
+########################
+
+# https://www.elastic.co/guide/en/logstash/current/dir-layout.html#docker-layout
+path.config: /usr/share/logstash/pipeline
+
+# https://www.elastic.co/guide/en/logstash/current/monitoring-internal-collection-legacy.html#logstash-monitoring-default-legacy
+# For newer version, see https://www.elastic.co/guide/en/logstash/master/monitoring-with-elastic-agent.html
+xpack.monitoring.elasticsearch.hosts: [ "localhost:9200" ]
